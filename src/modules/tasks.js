@@ -24,7 +24,7 @@ export const renderTasks = () => {
   });
 };
 
-export function addTask(description) {
+export const addTask = (description) => {
   const index = tasks.length + 1;
   tasks.push({
     description,
