@@ -1,16 +1,42 @@
-import _ from 'lodash';
 import './style.css';
-import { greet } from './modules/greet.js';
 
-function component() {
-  const element = document.createElement('div');
+const tasks = [
+  {
+    description: 'Buy some food',
+    completed: false,
+    index: 1,
+  },
+  {
+    description: 'Go for walk',
+    completed: false,
+    index: 2,
+  },
+  {
+    description: 'Do laundry',
+    completed: false,
+    index: 3,
+  },
+];
 
-  // Lodash, now imported by this script
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-  element.classList.add('hello');
+const renderTasks = () => {
+  const taskContainer = document.querySelector('.task-container');
+  taskContainer.innerHTML = '';
 
-  return element;
-}
+  tasks.sort((a, b) => a.index - b.index);
 
-document.body.appendChild(component());
-greet();
+  tasks.forEach((task) => {
+    const taskElement = `
+      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''}">
+        <input type="checkbox">
+        <p>${task.description}</p>
+        <i class="las la-ellipsis-v btn"></i>
+      </li>
+    `;
+
+    taskContainer.insertAdjacentHTML('beforeend', taskElement);
+  });
+};
+
+window.addEventListener('load', () => {
+  renderTasks();
+});
