@@ -1,25 +1,33 @@
 import './style.css';
+import { renderTasks, addTask} from './modules/tasks.js';
 
-const tasks = [];
+renderTasks();
 
-const renderTasks = () => {
-  const taskContainer = document.querySelector('.task-container');
-  taskContainer.innerHTML = '';
+const form = document.querySelector('.task-form');
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const input = form.querySelector('input[type=text]');
+  const description = input.value.trim();
+  if (description) {
+    addTask(description);
+    input.value = '';
+  }
+});
 
-  tasks.sort((a, b) => a.index - b.index);
+const addTaskBtn = document.querySelector('.la-level-down-alt');
+addTaskBtn.addEventListener('click', () => {
+  const input = form.querySelector('input[type=text]');
+  const description = input.value.trim();
+  if (description) {
+    addTask(description);
+    input.value = '';
+  }
+});
 
-  tasks.forEach((task) => {
-    const taskElement = `
-      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''}">
-        <input type="checkbox">
-        <p>${task.description}</p>
-        <i class="las la-ellipsis-v btn"></i>
-      </li>
-    `;
-
-    taskContainer.insertAdjacentHTML('beforeend', taskElement);
-  });
-};
+const refreshTasks = document.querySelector('.la-sync');
+refreshTasks.addEventListener('click', () => {
+  window.location.reload();
+});
 
 window.addEventListener('load', () => {
   renderTasks();

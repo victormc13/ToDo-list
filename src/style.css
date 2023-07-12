@@ -97,3 +97,7 @@ button:focus {
   color: rgb(0, 132, 255);
   text-decoration: line-through;
 }
+
+.hidden {
+  display: none;
+}
