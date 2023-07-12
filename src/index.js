@@ -37,3 +37,7 @@ const renderTasks = () => {
     taskContainer.insertAdjacentHTML('beforeend', taskElement);
   });
 }
+
+window.addEventListener("load", () => {
+  renderTasks();
+});
