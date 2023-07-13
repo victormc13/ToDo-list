@@ -97,3 +97,12 @@ button:focus {
   color: rgb(0, 132, 255);
   text-decoration: line-through;
 }
+
+.task-editing {
+  background-color: lightskyblue;
+  font-style: italic;
+}
+
+.hidden {
+  display: none;
+}

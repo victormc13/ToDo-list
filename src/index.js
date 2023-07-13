@@ -1,42 +1,35 @@
 import './style.css';
+import { renderTasks, addTask, taskMenu } from './modules/tasks.js';
 
-const tasks = [
-  {
-    description: 'Buy some food',
-    completed: false,
-    index: 1,
-  },
-  {
-    description: 'Go for walk',
-    completed: false,
-    index: 2,
-  },
-  {
-    description: 'Do laundry',
-    completed: false,
-    index: 3,
-  },
-];
-
-const renderTasks = () => {
-  const taskContainer = document.querySelector('.task-container');
-  taskContainer.innerHTML = '';
-
-  tasks.sort((a, b) => a.index - b.index);
-
-  tasks.forEach((task) => {
-    const taskElement = `
-      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''}">
-        <input type="checkbox">
-        <p>${task.description}</p>
-        <i class="las la-ellipsis-v btn"></i>
-      </li>
-    `;
-
-    taskContainer.insertAdjacentHTML('beforeend', taskElement);
-  });
-};
-
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
   renderTasks();
+  taskMenu();
+});
+
+const form = document.querySelector('.task-form');
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const input = form.querySelector('input[type=text]');
+  const description = input.value.trim();
+  if (description) {
+    addTask(description);
+    input.value = '';
+  }
+  taskMenu();
+});
+
+const addTaskBtn = document.querySelector('.la-level-down-alt');
+addTaskBtn.addEventListener('click', () => {
+  const input = form.querySelector('input[type=text]');
+  const description = input.value.trim();
+  if (description) {
+    addTask(description);
+    input.value = '';
+  }
+  taskMenu();
+});
+
+const refreshTasks = document.querySelector('.la-sync');
+refreshTasks.addEventListener('click', () => {
+  window.location.reload();
 });
