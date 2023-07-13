@@ -1,7 +1,9 @@
 import './style.css';
 import { renderTasks, addTask} from './modules/tasks.js';
 
-renderTasks();
+window.addEventListener('DOMContentLoaded', () => {
+  renderTasks();
+});
 
 const form = document.querySelector('.task-form');
 form.addEventListener('submit', (event) => {
@@ -12,6 +14,7 @@ form.addEventListener('submit', (event) => {
     addTask(description);
     input.value = '';
   }
+  renderTasks();
 });
 
 const addTaskBtn = document.querySelector('.la-level-down-alt');
@@ -27,8 +30,4 @@ addTaskBtn.addEventListener('click', () => {
 const refreshTasks = document.querySelector('.la-sync');
 refreshTasks.addEventListener('click', () => {
   window.location.reload();
-});
-
-window.addEventListener('load', () => {
-  renderTasks();
 });
