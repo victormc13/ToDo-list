@@ -10,22 +10,6 @@ const updateTaskIndexes = () => {
   });
 };
 
-const deleteTask = (event) => {
-  const trashBtn = event.target.closest('.la-trash-alt');
-
-  if (trashBtn) {
-    const taskItem = trashBtn.closest('.task-item');
-    const taskIndex = Array.from(taskItem.parentNode.children).indexOf(
-      taskItem,
-    );
-
-    tasks.splice(taskIndex, 1);
-    updateTaskIndexes();
-    saveTasks();
-    renderTasks(); // eslint-disable-line no-use-before-define
-  }
-};
-
 export const renderTasks = () => {
   const taskContainer = document.querySelector('.task-container');
   taskContainer.innerHTML = '';
@@ -45,11 +29,26 @@ export const renderTasks = () => {
 
     taskContainer.insertAdjacentHTML('beforeend', taskElement);
   });
+};
 
+const deleteTask = (event) => {
   const trashIcons = document.querySelectorAll('.la-trash-alt');
   trashIcons.forEach((trashBtn) => {
     trashBtn.addEventListener('click', deleteTask);
   });
+  const trashBtn = event.target.closest('.la-trash-alt');
+
+  if (trashBtn) {
+    const taskItem = trashBtn.closest('.task-item');
+    const taskIndex = Array.from(taskItem.parentNode.children).indexOf(
+      taskItem,
+    );
+
+    tasks.splice(taskIndex, 1);
+    updateTaskIndexes();
+    saveTasks();
+    renderTasks();
+  }
 };
 
 export const taskMenu = () => {
