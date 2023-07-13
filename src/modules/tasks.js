@@ -1,4 +1,4 @@
-const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
 export const saveTasks = () => {
   localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -18,9 +18,8 @@ export const renderTasks = () => {
 
   tasks.forEach((task) => {
     const taskElement = `
-      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''
-}">
-        <input type="checkbox">
+      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''}">
+        <input type="checkbox" ${task.completed ? 'checked' : ''}>
         <p class="task-content">${task.description}</p>
         <i class="las la-ellipsis-v btn"></i>
         <i class="las la-trash-alt btn hidden"></i>
@@ -29,20 +28,35 @@ export const renderTasks = () => {
 
     taskContainer.insertAdjacentHTML('beforeend', taskElement);
   });
+
+  const checkboxes = taskContainer.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', (event) => {
+      const checkbox = event.target;
+      const taskItem = checkbox.closest('.task-item');
+      const taskIndex = Array.from(taskItem.parentNode.children).indexOf(taskItem);
+
+      tasks[taskIndex].completed = checkbox.checked;
+      renderTasks();
+      saveTasks();
+    });
+  });
+
+  const clearCompletedBtn = document.querySelector('.completed-tasks-btn');
+  clearCompletedBtn.addEventListener('click', () => {
+    tasks = tasks.filter((task) => !task.completed);
+    updateTaskIndexes();
+    saveTasks();
+    renderTasks();
+  });
 };
 
 const deleteTask = (event) => {
-  const trashIcons = document.querySelectorAll('.la-trash-alt');
-  trashIcons.forEach((trashBtn) => {
-    trashBtn.addEventListener('click', deleteTask);
-  });
   const trashBtn = event.target.closest('.la-trash-alt');
 
   if (trashBtn) {
     const taskItem = trashBtn.closest('.task-item');
-    const taskIndex = Array.from(taskItem.parentNode.children).indexOf(
-      taskItem,
-    );
+    const taskIndex = Array.from(taskItem.parentNode.children).indexOf(taskItem);
 
     tasks.splice(taskIndex, 1);
     updateTaskIndexes();
@@ -94,10 +108,7 @@ export const taskMenu = () => {
           taskMenu.parentNode.classList.remove('task-editing');
           taskMenu.classList.remove('hidden');
           trashBtn.classList.add('hidden');
-          document.removeEventListener(
-            'keydown',
-            disableTaskDescriptionEditing,
-          );
+          document.removeEventListener('keydown', disableTaskDescriptionEditing);
           document.removeEventListener('click', disableTaskDescriptionEditing);
         }
       };
