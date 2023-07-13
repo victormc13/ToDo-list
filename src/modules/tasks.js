@@ -4,48 +4,26 @@ export const saveTasks = () => {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 
-export const taskMenu = () => {
-  const taskMenuItems = document.querySelectorAll('.la-ellipsis-v');
-
-  taskMenuItems.forEach((taskMenu) => {
-    taskMenu.addEventListener('click', (event) => {
-      const taskMenu = event.target;
-      taskMenu.parentNode.classList.add('task-editing');
-      taskMenu.classList.toggle('hidden');
-
-      const taskDescription = taskMenu.parentNode.querySelector('.task-content');
-      const taskItem = taskMenu.closest('.task-item');
-      const trashBtn = taskItem.querySelector('.la-trash-alt');
-
-      const enableTaskDescriptionEditing = () => {
-        trashBtn.classList.toggle('hidden');
-        taskDescription.contentEditable = true;
-        taskDescription.focus();
-      };
-      enableTaskDescriptionEditing();
-
-      const disableTaskDescriptionEditing = (event) => {
-        if (
-          event.key === 'Enter'
-          || (event.type === 'click'
-            && !taskMenu.parentNode.contains(event.target))
-        ) {
-          const taskItemParent = taskDescription.closest('.task-item');
-          taskDescription.contentEditable = false;
-          taskItemParent.classList.remove('task-editing');
-          trashBtn.classList.add('hidden');
-          taskMenu.classList.remove('hidden');
-          document.removeEventListener(
-            'keydown',
-            disableTaskDescriptionEditing,
-          );
-          document.removeEventListener('click', disableTaskDescriptionEditing);
-        }
-      };
-      document.addEventListener('keydown', disableTaskDescriptionEditing);
-      document.addEventListener('click', disableTaskDescriptionEditing);
-    });
+const updateTaskIndexes = () => {
+  tasks.forEach((task, index) => {
+    task.index = index + 1;
   });
+};
+
+const deleteTask = (event) => {
+  const trashBtn = event.target.closest('.la-trash-alt');
+
+  if (trashBtn) {
+    const taskItem = trashBtn.closest('.task-item');
+    const taskIndex = Array.from(taskItem.parentNode.children).indexOf(
+      taskItem,
+    );
+
+    tasks.splice(taskIndex, 1);
+    updateTaskIndexes();
+    saveTasks();
+    renderTasks(); // eslint-disable-line no-use-before-define
+  }
 };
 
 export const renderTasks = () => {
@@ -56,7 +34,8 @@ export const renderTasks = () => {
 
   tasks.forEach((task) => {
     const taskElement = `
-      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''}">
+      <li class="task-item flex-row ${task.completed ? 'task-completed' : ''
+}">
         <input type="checkbox">
         <p class="task-content">${task.description}</p>
         <i class="las la-ellipsis-v btn"></i>
@@ -65,6 +44,67 @@ export const renderTasks = () => {
     `;
 
     taskContainer.insertAdjacentHTML('beforeend', taskElement);
+  });
+
+  const trashIcons = document.querySelectorAll('.la-trash-alt');
+  trashIcons.forEach((trashBtn) => {
+    trashBtn.addEventListener('click', deleteTask);
+  });
+};
+
+export const taskMenu = () => {
+  const taskContainer = document.querySelector('.task-container');
+
+  taskContainer.addEventListener('click', (event) => {
+    const taskMenu = event.target.closest('.la-ellipsis-v');
+
+    if (taskMenu) {
+      const taskItem = taskMenu.closest('.task-item');
+      const trashBtn = taskItem.querySelector('.la-trash-alt');
+      const taskDescription = taskItem.querySelector('.task-content');
+
+      taskMenu.parentNode.classList.add('task-editing');
+      taskMenu.classList.add('hidden');
+      trashBtn.classList.remove('hidden');
+
+      const addTrashIconEventListener = () => {
+        trashBtn.addEventListener('click', deleteTask);
+      };
+
+      const enableTaskDescriptionEditing = () => {
+        taskDescription.contentEditable = true;
+        taskDescription.focus();
+        addTrashIconEventListener();
+
+        const saveTaskDescription = () => {
+          const taskIndex = Array.from(taskItem.parentNode.children).indexOf(taskItem);
+          tasks[taskIndex].description = taskDescription.textContent;
+          saveTasks();
+        };
+
+        taskDescription.addEventListener('input', saveTaskDescription);
+      };
+      enableTaskDescriptionEditing();
+
+      const disableTaskDescriptionEditing = (event) => {
+        if (
+          event.key === 'Enter'
+          || (event.type === 'click' && !taskItem.contains(event.target))
+        ) {
+          taskDescription.contentEditable = false;
+          taskMenu.parentNode.classList.remove('task-editing');
+          taskMenu.classList.remove('hidden');
+          trashBtn.classList.add('hidden');
+          document.removeEventListener(
+            'keydown',
+            disableTaskDescriptionEditing,
+          );
+          document.removeEventListener('click', disableTaskDescriptionEditing);
+        }
+      };
+      document.addEventListener('keydown', disableTaskDescriptionEditing);
+      document.addEventListener('click', disableTaskDescriptionEditing);
+    }
   });
 };
 
@@ -78,3 +118,6 @@ export const addTask = (description) => {
   saveTasks();
   renderTasks();
 };
+
+taskMenu();
+renderTasks();
