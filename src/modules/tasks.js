@@ -128,6 +128,3 @@ export const addTask = (description) => {
   saveTasks();
   renderTasks();
 };
-
-taskMenu();
-renderTasks();

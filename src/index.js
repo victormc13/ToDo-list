@@ -15,7 +15,6 @@ form.addEventListener('submit', (event) => {
     addTask(description);
     input.value = '';
   }
-  taskMenu();
 });
 
 const addTaskBtn = document.querySelector('.la-level-down-alt');
@@ -26,7 +25,6 @@ addTaskBtn.addEventListener('click', () => {
     addTask(description);
     input.value = '';
   }
-  taskMenu();
 });
 
 const refreshTasks = document.querySelector('.la-sync');
