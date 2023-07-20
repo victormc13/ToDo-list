@@ -1,5 +1,7 @@
 import './style.css';
-import { renderTasks, addTask, taskMenu } from './modules/tasks.js';
+import {
+  saveTasks, renderTasks, addTask, taskMenu, clearCompletedTasks, updateTaskIndexes,
+} from './modules/tasks.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   renderTasks();
@@ -15,16 +17,16 @@ form.addEventListener('submit', (event) => {
     addTask(description);
     input.value = '';
   }
+  saveTasks();
+  renderTasks();
 });
 
-const addTaskBtn = document.querySelector('.la-level-down-alt');
-addTaskBtn.addEventListener('click', () => {
-  const input = form.querySelector('input[type=text]');
-  const description = input.value.trim();
-  if (description) {
-    addTask(description);
-    input.value = '';
-  }
+const clearCompletedBtn = document.querySelector('.completed-tasks-btn');
+clearCompletedBtn.addEventListener('click', () => {
+  clearCompletedTasks();
+  updateTaskIndexes();
+  saveTasks();
+  renderTasks();
 });
 
 const refreshTasks = document.querySelector('.la-sync');

@@ -4,7 +4,7 @@ export const saveTasks = () => {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 
-const updateTaskIndexes = () => {
+export const updateTaskIndexes = () => {
   tasks.forEach((task, index) => {
     task.index = index + 1;
   });
@@ -41,14 +41,10 @@ export const renderTasks = () => {
       saveTasks();
     });
   });
+};
 
-  const clearCompletedBtn = document.querySelector('.completed-tasks-btn');
-  clearCompletedBtn.addEventListener('click', () => {
-    tasks = tasks.filter((task) => !task.completed);
-    updateTaskIndexes();
-    saveTasks();
-    renderTasks();
-  });
+export const clearCompletedTasks = () => {
+  tasks = tasks.filter((task) => !task.completed);
 };
 
 const deleteTask = (event) => {
@@ -59,9 +55,6 @@ const deleteTask = (event) => {
     const taskIndex = Array.from(taskItem.parentNode.children).indexOf(taskItem);
 
     tasks.splice(taskIndex, 1);
-    updateTaskIndexes();
-    saveTasks();
-    renderTasks();
   }
 };
 
@@ -81,7 +74,12 @@ export const taskMenu = () => {
       trashBtn.classList.remove('hidden');
 
       const addTrashIconEventListener = () => {
-        trashBtn.addEventListener('click', deleteTask);
+        trashBtn.addEventListener('click', (event) => {
+          deleteTask(event);
+          updateTaskIndexes();
+          saveTasks();
+          renderTasks();
+        });
       };
 
       const enableTaskDescriptionEditing = () => {
@@ -125,6 +123,4 @@ export const addTask = (description) => {
     completed: false,
     index,
   });
-  saveTasks();
-  renderTasks();
 };
